@@ -1,0 +1,778 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.infostretch</groupId>
+	<artifactId>QmetryTestManager</artifactId>
+	<version>4.1.6.1${profile.id}</version>
+
+	<organization>
+		<name>QMetry Inc</name>
+		<url>http://www.qmetry.com/</url>
+	</organization>
+
+	<name>QMetry for Jira - Test Management</name>
+	<description>The Best Test Management Inside Jira to Run Manual and Automated Test Cases. Get Quality Analytics with Test Coverage and Traceability.
+	</description>
+	<packaging>atlassian-plugin</packaging>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>atlassian-public</id>
+			<url>https://m2proxy.atlassian.com/repository/public/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<properties>
+		<!-- DEV DEPENDENCIES -->
+		<atlassian.rest.common.version>1.0.2</atlassian.rest.common.version>
+		<atlassian.upm.version>2.9.3</atlassian.upm.version>
+		<javax.servlet.version>3.1.0</javax.servlet.version>
+		<javax.inject.version>1</javax.inject.version>
+		<gson.version>2.2.2-atlassian-1</gson.version>
+		<modelmapper.version>2.3.5</modelmapper.version>
+		<lombok.version>1.18.8</lombok.version>
+		<hashid.version>1.0.1</hashid.version>
+		<apache.common.io.version>2.6</apache.common.io.version>
+		<apache.common.collections.version>4.2</apache.common.collections.version>
+		<hibernate.validation.provider.version>6.0.17.Final</hibernate.validation.provider.version>
+		<swagger.version>1.5.9</swagger.version>
+		<jcraft.version>0.1.55</jcraft.version>
+		<commons-net.version>3.6</commons-net.version>
+		<springframework.crypto.version>3.1.4.RELEASE</springframework.crypto.version>
+
+		<!-- DATABASE CONNECTORS -->
+		<mysql.connector.version>5.1.48</mysql.connector.version>
+		<postgresql.connector.version>9.2-1002.jdbc4</postgresql.connector.version>
+		<oracle.connector.version>11.2.0.3.0</oracle.connector.version>
+		<sqlserver.connector.version>6.2.1.jre8</sqlserver.connector.version>
+
+		<!-- TEST DEPENDENCIES -->
+		<junit.version>4.12</junit.version>
+		<mockito.version>3.0.0</mockito.version>
+		<powermock.version>2.0.4</powermock.version>
+		<jersey.test.version>2.25</jersey.test.version>
+		<org.glassfish.javax.el.version>3.0.1-b11</org.glassfish.javax.el.version>
+		<slf4j.test.version>1.7.21</slf4j.test.version>
+		<relection.test.version>0.9.10</relection.test.version>
+
+		<!-- PLUGIN SPECIFIC -->
+		<amps.version>8.0.0</amps.version>
+		<atlassian.spring.scanner.version>1.2.13</atlassian.spring.scanner.version>
+		<quick.reload.version>3.0.0</quick.reload.version>
+		<swagger.plugin.version>3.1.8</swagger.plugin.version>
+		<copy.rename.plugin.version>1.0</copy.rename.plugin.version>
+		<read.properties.plugin.version>1.0.0</read.properties.plugin.version>
+		<atlassian.plugin.key>${project.groupId}.${project.artifactId}</atlassian.plugin.key>
+		<devToolboxEnabled>true</devToolboxEnabled>
+		<quickReload>true</quickReload>
+		<qmetry.dev.toolbox.enable>${devToolboxEnabled}</qmetry.dev.toolbox.enable>
+		<qmetry.dev.quick-reload.enable>${quickReload}</qmetry.dev.quick-reload.enable>
+
+		<!-- OTHER -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<apache.poi.version>4.0.1</apache.poi.version>
+		<exec.maven.plugin>1.6.0</exec.maven.plugin>
+
+		<!-- SKIP PLUGIN EXECUTIONS -->
+		<skip.npm>false</skip.npm>
+		<skip.swagger>false</skip.swagger>
+	</properties>
+
+	<profiles>
+		<profile>
+			<id>jira8</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<jira.version>8.3.0</jira.version>
+				<jira.greenhopper>8.3.0-DAILY20190613113730</jira.greenhopper>
+				<springframework.version>4.3.7.RELEASE</springframework.version>
+				<pocketknife.version>5.0.0</pocketknife.version>
+				<ao.version>3.0.0</ao.version>
+				<sal.spi.version>4.0.0</sal.spi.version>
+				<profile.id></profile.id>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>jira7</id>
+			<properties>
+				<jira.version>7.1.0</jira.version>
+				<jira.greenhopper>7.1.23-DAILY20160627065553</jira.greenhopper>
+				<springframework.version>4.1.6.RELEASE</springframework.version>
+				<pocketknife.version>4.4.1</pocketknife.version>
+				<ao.version>1.2.0</ao.version>
+				<sal.spi.version>3.0.3</sal.spi.version>
+				<profile.id>_jira7</profile.id>
+			</properties>
+		</profile>
+	</profiles>
+
+	<dependencies>
+
+		<!-- TESTING -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito2</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>${slf4j.test.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.reflections</groupId>
+			<artifactId>reflections</artifactId>
+			<version>${relection.test.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.connector.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.connector.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>cn.guoyukun.jdbc</groupId>
+			<artifactId>oracle-ojdbc6</artifactId>
+			<version>${oracle.connector.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>${sqlserver.connector.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.atlassian.sal</groupId>
+			<artifactId>sal-spi</artifactId>
+			<version>${sal.spi.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.test-framework.providers</groupId>
+			<artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+			<version>${jersey.test.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>${jersey.test.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>${jersey.test.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.glassfish</groupId>
+			<artifactId>javax.el</artifactId>
+			<version>${org.glassfish.javax.el.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.atlassian.jira</groupId>
+			<artifactId>jira-tests</artifactId>
+			<version>${jira.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- ATLASSIAN -->
+		<dependency>
+			<groupId>com.atlassian.jira</groupId>
+			<artifactId>jira-api</artifactId>
+			<version>${jira.version}</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.atlassian.plugins.rest</groupId>
+			<artifactId>atlassian-rest-common</artifactId>
+			<version>${atlassian.rest.common.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- SPRING -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${springframework.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${springframework.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+			<version>${springframework.crypto.version}</version>
+		</dependency>
+
+		<!-- ATLASSIAN-SPRING -->
+		<dependency>
+			<groupId>com.atlassian.plugin</groupId>
+			<artifactId>atlassian-spring-scanner-annotation</artifactId>
+			<version>${atlassian.spring.scanner.version}</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.atlassian.plugin</groupId>
+			<artifactId>atlassian-spring-scanner-runtime</artifactId>
+			<version>${atlassian.spring.scanner.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- JAVAX -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>${javax.inject.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${javax.servlet.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- ACTIVE OBJECTS -->
+		<dependency>
+			<groupId>com.atlassian.activeobjects</groupId>
+			<artifactId>activeobjects-plugin</artifactId>
+			<version>${ao.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.atlassian.activeobjects</groupId>
+			<artifactId>activeobjects-jira-spi</artifactId>
+			<version>${ao.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.atlassian.activeobjects</groupId>
+			<artifactId>activeobjects-spi</artifactId>
+			<version>${ao.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- PocketKnife QueryDSL -->
+		<dependency>
+			<groupId>com.atlassian.pocketknife</groupId>
+			<artifactId>atlassian-pocketknife-querydsl</artifactId>
+			<version>${pocketknife.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.validation</groupId>
+					<artifactId>validation-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.atlassian.pocketknife</groupId>
+			<artifactId>atlassian-pocketknife-querydsl-test-util</artifactId>
+			<version>${pocketknife.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- MODEL MAPPER -->
+		<dependency>
+			<groupId>org.modelmapper</groupId>
+			<artifactId>modelmapper</artifactId>
+			<version>${modelmapper.version}</version>
+		</dependency>
+
+		<!-- LOMBOK -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- HASHID -->
+		<dependency>
+			<groupId>org.hashids</groupId>
+			<artifactId>hashids</artifactId>
+			<version>${hashid.version}</version>
+		</dependency>
+
+		<!-- HELPER -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${apache.common.io.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-collections4</artifactId>
+			<version>${apache.common.collections.version}</version>
+		</dependency>
+
+		<!-- JSON -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+		</dependency>
+
+		<!-- LICENSING -->
+		<dependency>
+			<groupId>com.atlassian.upm</groupId>
+			<artifactId>licensing-api</artifactId>
+			<version>${atlassian.upm.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.atlassian.upm</groupId>
+			<artifactId>upm-api</artifactId>
+			<version>${atlassian.upm.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- SWAGGER -->
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>${swagger.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- VALIDATION PROVIDER -->
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.validation.provider.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator-annotation-processor</artifactId>
+			<version>${hibernate.validation.provider.version}</version>
+		</dependency>
+
+		<!-- SFTP -->
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>${jcraft.version}</version>
+		</dependency>
+
+		<!-- FTP -->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>${commons-net.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.atlassian.jira.plugins</groupId>
+			<artifactId>jira-greenhopper-plugin</artifactId>
+			<version>${jira.greenhopper}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- EXCEL -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>${apache.poi.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>${apache.poi.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>4.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>1.2.1</version>
+		</dependency>
+
+		<!-- =========3.x Dependecies======= -->
+		<!-- FASTER XML -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.7.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.7.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.7.3</version>
+		</dependency>
+
+		<!-- JJWT -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.4</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<!-- TEMPLATE RENDERER -->
+		<dependency>
+			<groupId>com.atlassian.templaterenderer</groupId>
+			<artifactId>atlassian-template-renderer-api</artifactId>
+			<version>1.1.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- HTTP COMPONENTS -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.1</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.atlassian.maven.plugins</groupId>
+				<artifactId>jira-maven-plugin</artifactId>
+				<version>${amps.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<productVersion>${jira.version}</productVersion>
+					<productDataVersion>${jira.version}</productDataVersion>
+					<enableQuickReload>${qmetry.dev.quick-reload.enable}</enableQuickReload>
+					<enableDevToolbox>${qmetry.dev.toolbox.enable}</enableDevToolbox>
+					<quickReloadVersion>${quick.reload.version}</quickReloadVersion>
+					<skipRestDocGeneration>true</skipRestDocGeneration>
+					<allowGoogleTracking>false</allowGoogleTracking>
+					<skipManifestValidation>true</skipManifestValidation>
+					<extractDependencies>false</extractDependencies>
+					<log4jProperties>src/main/resources/log4j.properties</log4jProperties>
+					<libArtifacts>
+						<libArtifact>
+							<groupId>mysql</groupId>
+							<artifactId>mysql-connector-java</artifactId>
+							<version>${mysql.connector.version}</version>
+						</libArtifact>
+						<libArtifact>
+							<groupId>postgresql</groupId>
+							<artifactId>postgresql</artifactId>
+							<version>${postgresql.connector.version}</version>
+						</libArtifact>
+						<libArtifact>
+							<groupId>cn.guoyukun.jdbc</groupId>
+							<artifactId>oracle-ojdbc6</artifactId>
+							<version>${oracle.connector.version}</version>
+						</libArtifact>
+						<libArtifact>
+							<groupId>com.microsoft.sqlserver</groupId>
+							<artifactId>mssql-jdbc</artifactId>
+							<version>${sqlserver.connector.version}</version>
+						</libArtifact>
+					</libArtifacts>
+					<instructions>
+						<Atlassian-Plugin-Key>${atlassian.plugin.key}</Atlassian-Plugin-Key>
+						<Atlassian-Scan-Folders>META-INF/plugin-descriptors</Atlassian-Scan-Folders>
+
+						<Export-Package>com.qmetry.api</Export-Package>
+						<Import-Package>
+							org.springframework.osgi.*;resolution:="optional",
+							org.eclipse.gemini.blueprint.*;resolution:="optional",
+							com.atlassian.plugin.osgi.bridge.external,
+
+							<!-- OPTIONAL POCKETKNIFE BITS - PRODUCT DEPENDENT -->
+							com.atlassian.refapp.api;resolution:="optional",
+							com.atlassian.jira.ofbiz;resolution:="optional",
+
+							<!-- EXCLUDE POCKETKNIFE BITS WE DON'T NEED -->
+							!net.sf.cglib.proxy,
+							!org.jvnet.hudson.annotation_indexer,
+
+							!org.apache.commons.fileupload.*;resolution:="optional",
+
+							<!-- !org.apache.log4j.*, -->
+
+							com.atlassian.jira.plugin.webfragment.conditions,
+
+							*;resolution:=optional
+						</Import-Package>
+						<Spring-Context>*</Spring-Context>
+					</instructions>
+					<applications>
+						<application>
+							<applicationKey>jira-software</applicationKey>
+							<version>${jira.version}</version>
+						</application>
+					</applications>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.atlassian.plugin</groupId>
+				<artifactId>atlassian-spring-scanner-maven-plugin</artifactId>
+				<version>${atlassian.spring.scanner.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>atlassian-spring-scanner</goal>
+						</goals>
+						<phase>process-classes</phase>
+					</execution>
+				</executions>
+				<configuration>
+					<verbose>false</verbose>
+					<scannedDependencies>
+						<dependency>
+							<groupId>com.atlassian.pocketknife</groupId>
+							<artifactId>atlassian-pocketknife-querydsl</artifactId>
+						</dependency>
+					</scannedDependencies>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>${exec.maven.plugin}</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>
+								com.qmetry.validate.SourceValidator
+							</mainClass>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.coderplus.maven.plugins</groupId>
+				<artifactId>copy-rename-maven-plugin</artifactId>
+				<version>${copy.rename.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>copy-and-rename-file</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<sourceFile>${project.basedir}/db/${project.activeProfiles[0].id}/dbconfig_${qmetry.dev.database}.xml</sourceFile>
+							<destinationFile>${project.build.directory}/jira/home/dbconfig.xml</destinationFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>properties-maven-plugin</artifactId>
+				<version>${read.properties.plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>read-project-properties</goal>
+						</goals>
+						<configuration>
+							<files>
+								<file>src/main/resources/application.properties</file>
+							</files>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.kongchen</groupId>
+				<artifactId>swagger-maven-plugin</artifactId>
+				<version>${swagger.plugin.version}</version>
+				<configuration>
+					<skipSwaggerGeneration>${skip.swagger}</skipSwaggerGeneration>
+					<apiSources>
+						<apiSource>
+							<locations>com.qmetry.*</locations>
+							<schemes>
+								<scheme>https</scheme>
+							</schemes>
+							<host>jiraserver.example.com</host>
+							<basePath>/rest/qtm4j/qapi/latest/</basePath>
+							<securityDefinitions>
+								<securityDefinition>
+									<name>Basic Auth</name>
+									<type>basic</type>
+								</securityDefinition>
+								<securityDefinition>
+									<name>API Key</name>
+									<type>apiKey</type>
+								</securityDefinition>
+							</securityDefinitions>
+							<info>
+								<title>QTM4J ${project.version}</title>
+								<version>${project.version}</version>
+								<description>
+									QMetry for JIRA (Server and Data Center) allows you to access data programmatically
+									in the form of REST APIs. To access any of the APIs listed below, user must send
+									Authorization header (for Basic authentication at Jira) and apiKey header
+									(QMetry's API Key for second level authentication).
+								</description>
+							</info>
+							<outputFormats>json</outputFormats>
+							<templatePath>${basedir}/swagger/templates/strapdown.html.hbs</templatePath>
+							<outputPath>${basedir}/src/main/resources/swagger-ui/document.html</outputPath>
+							<swaggerDirectory>${basedir}/src/main/resources/swagger-ui</swaggerDirectory>
+						</apiSource>
+					</apiSources>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.6</version>
+				<configuration>
+					<skip>${skip.npm}</skip>
+					<installDirectory>target</installDirectory>
+					<workingDirectory>src/main/frontend</workingDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>install node and npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<configuration>
+							<nodeVersion>v14.15.4</nodeVersion>
+							<npmVersion>6.14.11</npmVersion>
+						</configuration>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>webpack build</id>
+						<goals>
+							<goal>webpack</goal>
+						</goals>
+						<configuration>
+							<arguments>--max-old-space-size=12288</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
